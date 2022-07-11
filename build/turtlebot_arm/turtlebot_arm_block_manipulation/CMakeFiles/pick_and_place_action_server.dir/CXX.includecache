@@ -871,6 +871,8 @@ moveit/macros/class_forward.h
 -
 moveit/robot_state/robot_state.h
 -
+moveit/utils/moveit_error_code.h
+-
 moveit_msgs/RobotTrajectory.h
 -
 moveit_msgs/RobotState.h
@@ -1020,6 +1022,10 @@ geometry_msgs/Twist.h
 cassert
 -
 boost/assert.hpp
+-
+
+/opt/ros/melodic/include/moveit/utils/moveit_error_code.h
+moveit_msgs/MoveItErrorCodes.h
 -
 
 /opt/ros/melodic/include/moveit_msgs/AllowedCollisionEntry.h

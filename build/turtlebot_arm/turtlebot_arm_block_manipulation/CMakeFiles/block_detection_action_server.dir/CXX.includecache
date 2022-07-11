@@ -1337,6 +1337,16 @@ boost/ref.hpp
 -
 boost/thread/mutex.hpp
 -
+type_traits
+-
+memory
+-
+pcl/pcl_config.h
+-
+pcl/memory.h
+-
+pcl/make_shared.h
+-
 
 /opt/ros/melodic/include/pcl_ros/transforms.h
 sensor_msgs/PointCloud2.h

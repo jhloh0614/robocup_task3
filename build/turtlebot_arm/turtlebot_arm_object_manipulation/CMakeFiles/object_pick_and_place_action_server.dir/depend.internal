@@ -90,6 +90,7 @@ turtlebot_arm/turtlebot_arm_object_manipulation/CMakeFiles/object_pick_and_place
  /opt/ros/melodic/include/moveit/robot_model/robot_model.h
  /opt/ros/melodic/include/moveit/robot_state/attached_body.h
  /opt/ros/melodic/include/moveit/robot_state/robot_state.h
+ /opt/ros/melodic/include/moveit/utils/moveit_error_code.h
  /opt/ros/melodic/include/moveit_msgs/AllowedCollisionEntry.h
  /opt/ros/melodic/include/moveit_msgs/AllowedCollisionMatrix.h
  /opt/ros/melodic/include/moveit_msgs/AttachedCollisionObject.h

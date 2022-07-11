@@ -1195,6 +1195,8 @@ pcl_msgs/PointIndices.h
 -
 pcl_msgs/ModelCoefficients.h
 -
+pcl/pcl_base.h
+-
 pcl/point_types.h
 -
 pcl_conversions/pcl_conversions.h
@@ -1234,6 +1236,16 @@ boost/mpl/size.hpp
 boost/ref.hpp
 -
 boost/thread/mutex.hpp
+-
+type_traits
+-
+memory
+-
+pcl/pcl_config.h
+-
+pcl/memory.h
+-
+pcl/make_shared.h
 -
 
 /opt/ros/melodic/include/ros/advertise_options.h
