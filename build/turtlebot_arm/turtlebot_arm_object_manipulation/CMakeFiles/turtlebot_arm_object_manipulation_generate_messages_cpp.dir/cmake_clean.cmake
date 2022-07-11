@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/turtlebot_arm_object_manipulation_generate_messages_cpp"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetActionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandActionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipAction.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionActionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetActionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetActionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandActionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionActionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipActionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetAction.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceAction.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipActionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipActionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionActionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceActionGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceActionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/InteractiveManipGoal.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/ObjectDetectionAction.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandActionResult.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/PickAndPlaceActionFeedback.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/UserCommandAction.h"
+  "/home/mustar/catkin_ws/devel/include/turtlebot_arm_object_manipulation/MoveToTargetGoal.h"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/turtlebot_arm_object_manipulation_generate_messages_cpp.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

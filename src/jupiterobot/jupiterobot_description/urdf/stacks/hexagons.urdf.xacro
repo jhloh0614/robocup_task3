@@ -1,0 +1,855 @@
+<?xml version="1.0"?>
+<!--
+  Jupiterobot with Hexagon stacks
+ -->
+<robot name="stack_hexagons" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find jupiterobot_description)/urdf/common_properties.urdf.xacro"/>
+  
+  <!-- Calculates the inertial properties of a bounding box. From
+       https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors-->
+  <xacro:macro name="box_inertia" params="length width height mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="${mass/12*(height**2+length**2)}" ixy="0" ixz = "0"
+               iyy="${mass/12*(width**2+length**2)}" iyz="0"
+               izz="${mass/12*(width**2+height**2)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="solid_cylinder_inertia" params="radius height mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="${mass/12*(3*radius**2+height**2)}" ixy="0" ixz = "0"
+               iyy="${mass/12*(3*radius**2+height**2)}" iyz="0"
+               izz="${mass/2*(radius**2)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- Xacro properties -->
+  <xacro:property name="M_SCALE" value="0.001"/>
+  
+  <!-- Xacro macros -->
+  <!-- Pole macros -->
+  <xacro:macro name="stack_bottom_pole" params="parent number x_loc y_loc z_loc">
+    <joint name="pole_bottom_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_bottom_${number}_link"/>
+    </joint>
+    <link name="pole_bottom_${number}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pole_bottom.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0492" radius="0.006"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.006" height="0.0492" mass="0.012"/>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="stack_bob_weight" params="parent number x_loc y_loc z_loc">
+    <joint name="bob_weight_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="bob_weight_${number}_link"/>
+    </joint>
+    <link name="bob_weight_${number}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/bob_weight.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0392" radius="0.016"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.016" height="0.0392" mass="0.2"/>
+    </link>
+    <gazebo reference="bob_weight_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+  
+  <xacro:macro name="stack_middle_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_middle_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0" />
+      <parent link="${parent}"/>
+      <child link="pole_middle_${number}_link"/>
+    </joint>
+    <link name="pole_middle_${number}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${M_PI} 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pole_middle.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0608" radius="0.006"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.006" height="0.0608" mass="0.0155"/>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="stack_top_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_top_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_top_${number}_link"/>
+    </joint>
+    <link name="pole_top_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pole_top.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.2032" radius="0.006"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.006" height="0.2032" mass="0.062"/>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="stack_higher_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_higher_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_higher_${number}_link"/>
+    </joint>
+    <link name="pole_higher_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pole_high.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.20" radius="0.005"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.005" height="0.20" mass="0.036"/>
+    </link>
+    <gazebo reference="pole_higher_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+
+  <xacro:macro name="stack_3d_sensor_pole" params="parent number x_loc y_loc z_loc">
+    <joint name="pole_kinect_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_kinect_${number}_link"/>
+    </joint>
+    <link name="pole_kinect_${number}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/kinect_pole.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}" />
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0775" radius="0.006"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.006" height="0.0775" mass="0.023"/>
+    </link>
+    <gazebo reference="pole_kinect_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+
+  <xacro:macro name="stack_monitor_bottom_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_monitor_bottom_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_monitor_bottom_${number}_link"/>
+    </joint>
+    <link name="pole_monitor_bottom_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/monitor_bottom_pole.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.08" radius="0.005"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.005" height="0.08" mass="0.0145"/>
+    </link>
+    <gazebo reference="pole_monitor_bottom_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+
+  <xacro:macro name="stack_monitor_middle_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_monitor_middle_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_monitor_middle_${number}_link"/>
+    </joint>
+    <link name="pole_monitor_middle_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/monitor_middle_pole.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.08" radius="0.005"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.005" height="0.06" mass="0.0103"/>
+    </link>
+    <gazebo reference="pole_monitor_middle_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+
+  <xacro:macro name="stack_monitor_top_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="pole_monitor_top_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pole_monitor_top_${number}_link"/>
+    </joint>
+    <link name="pole_monitor_top_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/monitor_top_pole.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.04" radius="0.005"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.005" height="0.04" mass="0.0065"/>
+    </link>
+    <gazebo reference="pole_monitor_top_${number}_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+  </xacro:macro>
+
+  <!-- 
+    Stack macro - all the components relative transforms are made with respect 
+    to the parent link (usually base_link). They could be made relative to each
+    other, but there is no necessary reason to do so.
+  -->
+  <xacro:macro name="stack_hexagons" params="parent">
+    <xacro:stack_bottom_pole parent="${parent}" number="0" x_loc= "0.120" y_loc= "0.082" z_loc="0.1028"/>
+    <xacro:stack_bottom_pole parent="${parent}" number="1" x_loc= "0.055" y_loc= "0.120" z_loc="0.1028"/>
+    <xacro:stack_bottom_pole parent="${parent}" number="2" x_loc="-0.055" y_loc= "0.120" z_loc="0.1028"/>
+    <xacro:stack_bottom_pole parent="${parent}" number="3" x_loc= "0.120" y_loc="-0.082" z_loc="0.1028"/>
+    <xacro:stack_bottom_pole parent="${parent}" number="4" x_loc= "0.055" y_loc="-0.120" z_loc="0.1028"/>
+    <xacro:stack_bottom_pole parent="${parent}" number="5" x_loc="-0.055" y_loc="-0.120" z_loc="0.1028"/>
+    <xacro:stack_bob_weight parent="${parent}" number="0" x_loc= "0.120" y_loc= "0.082" z_loc="0.1078"/>
+    <xacro:stack_bob_weight parent="${parent}" number="1" x_loc= "0.120" y_loc="-0.082" z_loc="0.1078"/>
+    
+    <joint name="plate_bottom_joint" type="fixed">
+      <origin xyz="0.02364 0.0 0.1306" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_bottom_link"/>
+    </joint>  
+    <link name="plate_bottom_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/plate_bottom.dae"/>
+        </geometry>
+      </visual>  
+      <collision>
+        <origin xyz="-0.02364 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.006" radius="0.170"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.17" height="0.006" mass="0.396"/>
+    </link>
+
+    <joint name="nuc_joint" type="fixed">
+      <origin xyz="0.08 0.0 ${0.1306-0.0375/2}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="nuc_link"/>
+    </joint>  
+    <link name="nuc_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/nuc.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.117 0.112 0.0375"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.117" width="0.112" height="0.0375" mass="0.5"/>
+    </link>
+    <gazebo reference="nuc_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="battery_front_joint" type="fixed">
+      <origin xyz="0.13 0.035 ${0.1306+0.0275/2+0.003}" rpy="0 0 ${-M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="battery_front_link"/>
+    </joint>  
+    <link name="battery_front_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/battery_front.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.03 0.0245 0.0275"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.03" width="0.0245" height="0.0275" mass="0.007"/>
+    </link>
+    <gazebo reference="battery_front_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <joint name="battery_left_joint" type="fixed">
+      <origin xyz="0.0 -0.095 ${0.1306+0.0275/2+0.003}" rpy="0 0 ${M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="battery_left_link"/>
+    </joint>  
+    <link name="battery_left_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/battery_left.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.032 0.024 0.0275"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.032" width="0.024" height="0.0275" mass="0.0085"/>
+    </link>
+    <gazebo reference="battery_left_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <joint name="battery_right_joint" type="fixed">
+      <origin xyz="0.0 0.095 ${0.1306+0.0275/2+0.003}" rpy="0 0 ${M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="battery_right_link"/>
+    </joint>  
+    <link name="battery_right_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/battery_right.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.032 0.024 0.0275"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.032" width="0.024" height="0.0275" mass="0.0085"/>
+    </link>
+    <gazebo reference="battery_right_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <joint name="battery_joint" type="fixed">
+      <origin xyz="0.062 0.0 ${0.1306+0.0175/2+0.0085}" rpy="0 0 ${M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="battery_link"/>
+    </joint>  
+    <link name="battery_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/battery.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.185 0.139 0.0175"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.185" width="0.139" height="0.0175" mass="0.654"/>
+    </link>
+    <gazebo reference="battery_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+    
+    <xacro:stack_middle_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="0.1640"/>
+    <xacro:stack_middle_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="0.1640"/>
+    <xacro:stack_middle_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="0.1640"/>
+    <xacro:stack_middle_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="0.1640"/>
+    
+    <joint name="plate_middle_joint" type="fixed">
+      <origin xyz="-0.01364 0.0 0.1874" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_middle_link"/>
+    </joint>  
+    <link name="plate_middle_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/plate_middle.dae"/>
+        </geometry>
+      </visual>  
+      <collision>
+        <origin xyz="0.01364 0.0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.006" radius="0.170"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.17" height="0.006" mass="0.419"/>
+    </link>
+
+    <joint name="speaker_left_joint" type="fixed">
+      <origin xyz="0.0 -0.13 ${0.1874+0.063/2+0.003}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="speaker_left_link"/>
+    </joint>  
+    <link name="speaker_left_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/speaker.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.063 0.062 0.063"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.063" width="0.062" height="0.063" mass="0.086"/>
+    </link>
+    <gazebo reference="speaker_left_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+
+    <joint name="speaker_right_joint" type="fixed">
+      <origin xyz="0.0 0.13 ${0.1874+0.063/2+0.003}" rpy="0 0 ${M_PI}"/>
+      <parent link="${parent}"/>
+      <child link="speaker_right_link"/>
+    </joint>  
+    <link name="speaker_right_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/speaker.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.063 0.062 0.063"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.063" width="0.062" height="0.063" mass="0.086"/>
+    </link>
+    <gazebo reference="speaker_right_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+
+    <joint name="usb_middle_joint" type="fixed">
+      <origin xyz="-0.085 0.053 ${0.1874+0.02/2+0.003}" rpy="0 0 ${M_PI}"/>
+      <parent link="${parent}"/>
+      <child link="usb_middle_link"/>
+    </joint>  
+    <link name="usb_middle_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/usb.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0505 0.076 0.02"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.076" width="0.0505" height="0.02" mass="0.05"/>
+    </link>
+    <gazebo reference="usb_middle_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="plate_sensor_joint" type="fixed">
+      <origin xyz="-0.095 0 ${0.1874+0.077+0.0095/2+0.003}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_sensor_link"/>
+    </joint>  
+    <link name="plate_sensor_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/plate_sensor.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0303 0.212 0.0095"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.212" width="0.0303" height="0.0095" mass="0.028"/>
+    </link>
+    <gazebo reference="plate_sensor_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <joint name="pipe_middle_joint" type="fixed">
+      <origin xyz="-0.14 0 ${0.1874+0.203/2+0.003}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pipe_middle_link"/>
+    </joint>  
+    <link name="pipe_middle_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pipe_middle.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.203" radius="0.012"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.012" height="0.203" mass="0.05"/>
+    </link>
+    <gazebo reference="pipe_middle_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <xacro:stack_top_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="0.2920"/>
+    <xacro:stack_top_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="0.2920"/>
+    <xacro:stack_top_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="0.2920"/>
+    <xacro:stack_top_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="0.2920"/>
+    <xacro:stack_3d_sensor_pole parent="${parent}" number="0" x_loc="-0.1024" y_loc= "0.098" z_loc="0.2372"/>
+    <xacro:stack_3d_sensor_pole parent="${parent}" number="1" x_loc="-0.1024" y_loc="-0.098" z_loc="0.2372"/>
+   
+    <joint name="plate_top_joint" type="fixed">
+      <origin xyz="-0.01364 0.0  0.3966" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_top_link"/>
+    </joint>  
+    <link name="plate_top_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/plate_top.dae"/>
+        </geometry>
+      </visual>  
+      <collision>
+        <origin xyz="0.01364 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.006" radius="0.170"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.17" height="0.006" mass="0.52"/>
+    </link>
+
+    <joint name="usb_top_joint" type="fixed">
+      <origin xyz="-0.085 0.053 ${0.3966+0.02/2+0.003}" rpy="0 0 ${M_PI}"/>
+      <parent link="${parent}"/>
+      <child link="usb_top_link"/>
+    </joint>  
+    <link name="usb_top_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/usb.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0505 0.076 0.02"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.076" width="0.0505" height="0.02" mass="0.05"/>
+    </link>
+    <gazebo reference="usb_top_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="pipe_top_joint" type="fixed">
+      <origin xyz="-0.14 0 ${0.3966+0.2/2+0.003}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="pipe_top_link"/>
+    </joint>  
+    <link name="pipe_top_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/pipe_top.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.2" radius="0.012"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.012" height="0.2" mass="0.05"/>
+    </link>
+    <gazebo reference="pipe_top_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <xacro:stack_higher_pole parent="${parent}" number="0" x_loc="-0.0503" y_loc= "0.1314" z_loc="0.501"/>
+    <xacro:stack_higher_pole parent="${parent}" number="1" x_loc="-0.1024" y_loc=  "0.098" z_loc="0.501"/>
+    <xacro:stack_higher_pole parent="${parent}" number="2" x_loc="-0.1024" y_loc= "-0.098" z_loc="0.501"/>
+    <xacro:stack_higher_pole parent="${parent}" number="3" x_loc="-0.0503" y_loc="-0.1314" z_loc="0.501"/>
+    
+    <joint name="plate_higher_joint" type="fixed">
+      <origin xyz="-0.0639 0 0.601" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_higher_link"/>
+    </joint>  
+    <link name="plate_higher_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/circles/plate_higher.dae"/>
+        </geometry>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/circles/plate_higher.dae"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.17" height="0.006" mass="0.171"/>
+    </link>
+
+    <joint name="emergency_switch_joint" type="fixed">
+      <origin xyz="0.0145 -0.1084 0.556" rpy="${M_PI/2} 0 ${-M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="emergency_switch_link"/>
+    </joint>  
+    <link name="emergency_switch_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/emergency_switch.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="1 0 0 1"/>
+        </material>
+      </visual>  
+      <collision>
+        <origin xyz="0.02 0.038 0.02" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <cylinder length="0.10" radius="0.045"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.0225" height="0.008" mass="0.054"/>
+    </link>
+    <gazebo reference="emergency_switch_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="mic_mount_joint" type="fixed">
+      <origin xyz="-0.016175 0.1476 0.604" rpy="${M_PI/2} 0 0"/>
+      <parent link="${parent}"/>
+      <child link="mic_mount_link"/>
+    </joint>  
+    <link name="mic_mount_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/mic_mount.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>  
+      <collision>
+        <origin xyz="0.0162 0.015 0.0162" rpy="${M_PI/2} 0 0"/>
+        <geometry>
+          <cylinder length="0.03" radius="0.0162"/>
+        </geometry>
+      </collision>
+      <xacro:solid_cylinder_inertia radius="0.0162" height="0.03" mass="0.084"/>
+    </link>
+    <gazebo reference="mic_mount_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="mic_joint" type="fixed">
+      <origin xyz="0.095 0.1476 0.767" rpy="${M_PI/2+M_PI/3} 0 ${-M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="mic_link"/>
+    </joint>  
+    <link name="mic_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/mic.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>  
+      <collision>
+        <origin xyz="0.015 0.05 0.106" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.03 0.05 0.212"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.03" width="0.05" height="0.212" mass="0.133"/>
+    </link>
+    <gazebo reference="mic_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+
+    <xacro:stack_monitor_bottom_pole parent="${parent}" number="0" x_loc="-0.11127" y_loc= "0.057" z_loc="${0.604+0.08/2}"/>
+    <xacro:stack_monitor_bottom_pole parent="${parent}" number="1" x_loc="-0.11127" y_loc="-0.057" z_loc="${0.604+0.08/2}"/>
+
+    <joint name="monitor_mount_low_joint" type="fixed">
+      <origin xyz="-0.11127 0 ${0.604+0.08+0.0155/2}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="monitor_mount_low_link"/>
+    </joint>  
+    <link name="monitor_mount_low_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/monitor_mount.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.012 0.127 0.0155"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.127" width="0.012" height="0.0155" mass="0.012"/>
+    </link>
+    <gazebo reference="monitor_mount_low_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <xacro:stack_monitor_middle_pole parent="${parent}" number="0" x_loc="-0.11127" y_loc= "0.057" z_loc="${0.604+0.08+0.0155+0.06/2}"/>
+    <xacro:stack_monitor_middle_pole parent="${parent}" number="1" x_loc="-0.11127" y_loc="-0.057" z_loc="${0.604+0.08+0.0155+0.06/2}"/>
+
+    <joint name="monitor_mount_high_joint" type="fixed">
+      <origin xyz="-0.11127 0 ${0.604+0.08+0.0155+0.06+0.0155/2}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="monitor_mount_high_link"/>
+    </joint>  
+    <link name="monitor_mount_high_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/hexagons/monitor_mount.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>  
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.012 0.127 0.0155"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.127" width="0.012" height="0.0155" mass="0.012"/>
+    </link>
+    <gazebo reference="monitor_mount_high_link">             
+        <material>Gazebo/Black</material>        
+    </gazebo> 
+
+    <xacro:stack_monitor_top_pole parent="${parent}" number="0" x_loc="-0.11127" y_loc= "0.057" z_loc="${0.604+0.08+0.0155+0.06+0.0155+0.04/2}"/>
+    <xacro:stack_monitor_top_pole parent="${parent}" number="1" x_loc="-0.11127" y_loc="-0.057" z_loc="${0.604+0.08+0.0155+0.06+0.0155+0.04/2}"/>
+
+    <joint name="monitor_joint" type="fixed">
+      <origin xyz="-0.1064 -0.1225 0.647" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+      <parent link="${parent}"/>
+      <child link="monitor_link"/>
+    </joint>  
+    <link name="monitor_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_description/meshes/stacks/circles/monitor.dae"/>
+        </geometry>
+      </visual>  
+      <collision>
+        <origin xyz="${0.245/2} ${0.165/2} ${0.035/2}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.245 0.165 0.035"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia length="0.245" width="0.165" height="0.035" mass="0.466"/>
+    </link>
+
+  </xacro:macro>
+</robot>

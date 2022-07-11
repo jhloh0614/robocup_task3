@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- The common jupiterobot library of xacros for easy reference. Modified from turtlebot. -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- General -->
+  <xacro:include filename="$(find jupiterobot_description)/urdf/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find jupiterobot_description)/urdf/jupiterobot_properties.urdf.xacro"/>
+</robot>

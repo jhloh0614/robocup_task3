@@ -1,0 +1,14 @@
+<!--
+  Robot description only (used in private and paired master).
+ -->
+<launch>
+  <arg name="base"/>
+  <arg name="3d_sensor"/>
+  <arg name="stacks"/>
+  <arg name="lasers"/>
+  <arg name="arms"/>
+  <arg name="heads"/>
+
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find jupiterobot_description)/robots/jupiterobot_$(arg stacks)_$(arg lasers)_$(arg arms)_$(arg heads).urdf.xacro'"/>
+  <param name="robot_description" command="$(arg urdf_file)"/>
+</launch>

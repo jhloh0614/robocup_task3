@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: mustar_arm_description
+    relative_path: urdf/4_1/mustar_arm_4_1.urdf.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/mustar_arm.srdf
+  CONFIG:
+    author_name: Jupiter Robot
+    author_email: support@jupiterobot.com
+    generated_timestamp: 1598509148

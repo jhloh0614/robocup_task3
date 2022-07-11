@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: jupiterobot_teleop_arm
+Description: Description of jupiterobot_teleop_arm
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp geometry_msgs joy

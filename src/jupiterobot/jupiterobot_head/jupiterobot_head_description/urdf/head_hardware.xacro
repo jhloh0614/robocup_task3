@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!-- Basic URDF components for JupiterRobot Head-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="M_PI" value="3.14159"/>
+  <xacro:property name="M_SCALE" value="0.001"/>
+  <xacro:property name="AX12_HEIGHT" value="0.0385"/>
+  <xacro:property name="AX12_WIDTH" value="0.038"/>
+  <xacro:property name="AX12_LENGTH" value="0.050"/>
+  <xacro:property name="F3_HEIGHT" value="0.009"/>
+  <xacro:property name="HEAD_HIGH_LENGTH" value="0.05"/>
+  <xacro:property name="HEAD_HIGH_WIDTH" value="0.03"/>
+  <xacro:property name="HEAD_HIGH_HEIGHT" value="0.0455"/>
+  <xacro:property name="HEAD_LOW_LENGTH" value="0.13"/>
+  <xacro:property name="HEAD_LOW_WIDTH" value="0.06"/>
+  <xacro:property name="HEAD_LOW_HEIGHT" value="0.0063"/>
+
+  <!-- Calculates the inertial properties of a bounding box. From
+       https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors-->
+  <xacro:macro name="box_inertia" params="length width height mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="${mass/12*(height**2+length**2)}" ixy="0" ixz = "0"
+               iyy="${mass/12*(width**2+length**2)}" iyz="0"
+               izz="${mass/12*(width**2+height**2)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="dynamixel_AX12_fixed" params="parent name *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.055"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000017012" ixy="0.0" ixz="0.0"
+                 iyy="0.000013258" iyz="0.0"
+                 izz="0.000009483"/>
+      </inertial>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/ax12_box.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.01241" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.04762"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Black</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="bioloid_F3_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.038" height="0.009" mass="0.008"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/F3.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+
+  <xacro:macro name="head_mount_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.1443" width="0.06" height="0.0063" mass="0.02"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/head_mount.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="-0.015 0.0 0.003" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.06 0.1443 0.0063"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="head_lift_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.03" width="0.05" height="0.05967" mass="0.008"/>
+      <visual> 
+       <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/head_lift.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.015" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.03 0.05 0.05861"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="head_bottom_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.15" width="0.05" height="0.03" mass="0.0225"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/head_bottom.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.15 0.05 0.03"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="head_top_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.08" width="0.04" height="0.03" mass="0.0165"/>
+      <visual> 
+       <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/head_top.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.08 0.04 0.03"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="head_top_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.08" width="0.04" height="0.03" mass="0.0165"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/head_top.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.08 0.04 0.03"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>  
+    <!-- script_version=1.1 -->  
+    <robot name="sensor_rplidar" xmlns:xacro="http://ros.org/wiki/xacro">  
+      <xacro:include filename="$(find jupiterobot_description)/urdf/jupiterobot_gazebo.urdf.xacro"/>  
+      <xacro:include filename="$(find jupiterobot_description)/urdf/jupiterobot_properties.urdf.xacro"/>  
+    
+      <!-- RPLidar 2D LIDAR -->  
+      <xacro:macro name="sensor_rplidar" params="parent">  
+      <!--Rplidar_a1_mount -->
+        <joint name="rplidar_a1_mount_joint" type="fixed">
+          <origin xyz="0.004 0 -0.006" rpy="0 0 0"/>
+          <parent link="${parent}"/>
+          <child link="rplidar_a1_mount_link"/>
+        </joint>  
+        <link name="rplidar_a1_mount_link">
+          <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+              <mesh filename="package://jupiterobot_description/meshes/sensors/rplidar_a1_mount.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+            </geometry>
+            <material name="grey"/>
+          </visual>  
+          <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+              <box size="0.10525 0.063 0.006"/>
+            </geometry>
+          </collision>
+          <xacro:box_inertia length="0.10525" width="0.063" height="0.006" mass="0.013"/>
+        </link>
+       <gazebo reference="rplidar_a1_mount_link">             
+           <material>Gazebo/Black</material>        
+       </gazebo> 
+
+        <joint name="rplidar_a1_joint" type="fixed">  
+          <origin xyz="0.00964 0 -0.049" rpy="${M_PI} 0 0"/>  
+          <parent link="rplidar_a1_mount_link" />  
+            <child link="rplidar_a1_link" />
+        </joint>  
+        <!-- Rplidar Laser -->
+       <link name="rplidar_a1_link">
+         <collision>
+           <origin xyz="0 0 0" rpy="0 0 0"/>
+           <geometry>
+             <mesh filename="package://jupiterobot_description/meshes/sensors/rplidar.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+           </geometry>
+         </collision>
+         <visual>
+           <origin xyz="0 0 0" rpy="0 0 0"/>
+           <geometry>
+             <mesh filename="package://jupiterobot_description/meshes/sensors/rplidar.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+           </geometry>
+           <material name="grey"/>
+         </visual>
+         <xacro:solid_cylinder_inertia radius="0.07" height="0.006" mass="0.213"/>
+       </link>
+       <gazebo reference="rplidar_a1_link">             
+           <material>Gazebo/Gray</material>        
+       </gazebo> 
+        <!-- Set up laser gazebo details -->  
+    <jupiterobot_rplidar_a1/>
+  </xacro:macro>  
+</robot>  

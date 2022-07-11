@@ -1,0 +1,18 @@
+<package>
+  <name>jupiterobot_arm_bringup</name>
+  <version>0.1.0</version>
+  <description>
+   jupiterobot_arm_bringup provides launch files for starting the drivers for the JupiterRobot arm.
+  </description>
+  <author>Yucheng Xu</author>
+  <author>Fei Liu</author>
+  <maintainer email="support@jupiterobot.com">David</maintainer>
+  <license>BSD</license>
+  
+  <url>http://ros.org/wiki/jupiterobot_arm_bringup</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>arbotix_python</run_depend>
+  <run_depend>arbotix_controllers</run_depend>
+</package>

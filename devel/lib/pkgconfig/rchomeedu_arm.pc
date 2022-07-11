@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/devel
+
+Name: rchomeedu_arm
+Description: Description of rchomeedu_arm
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

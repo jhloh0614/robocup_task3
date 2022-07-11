@@ -1,0 +1,19 @@
+publisher:
+  detection_image:
+    topic: /maskrcnn_ros/segment_image
+    queue_size: 1
+    latch: true
+  
+  bounding_boxes:
+    topic: /maskrcnn_ros/segment_boxes
+    queue_size: 1
+    latch: false
+
+maskrcnn_model:
+  name: /mask_rcnn_resnet50_atrous_coco.xml
+  label: /coco.names
+  output_name: "reshape_do_2d"
+  mask_name: "masks"
+
+  
+

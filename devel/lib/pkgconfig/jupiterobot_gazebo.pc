@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/devel
+
+Name: jupiterobot_gazebo
+Description: Description of jupiterobot_gazebo
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

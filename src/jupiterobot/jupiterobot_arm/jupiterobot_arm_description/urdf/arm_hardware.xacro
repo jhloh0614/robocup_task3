@@ -1,0 +1,669 @@
+<?xml version="1.0"?>
+<!-- Basic URDF components for JupiterRobot Arm(Jupiterobot Arm)-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!--Define global parameters-->
+  <xacro:property name="M_PI" value="3.14159"/>
+  <xacro:property name="M_SCALE" value="0.001"/>
+  <xacro:property name="AX12_HEIGHT" value="0.0385"/>
+  <xacro:property name="AX12_WIDTH" value="0.038"/>
+  <xacro:property name="AX12_LENGTH" value="0.050"/>
+  <xacro:property name="F2_HEIGHT" value="0.0265"/>
+  <xacro:property name="F3_HEIGHT" value="0.009"/>
+  <xacro:property name="F4_HEIGHT" value="0.0525"/>
+  <xacro:property name="F4G_HEIGHT" value="0.072"/>
+  <xacro:property name="F4G_WIDTH" value="0.017"/>
+  <xacro:property name="F5_HEIGHT" value="0.0295"/>
+  <xacro:property name="F5G_HEIGHT" value="0.036"/>
+  <xacro:property name="F10_HEIGHT" value="0.004"/>
+  <xacro:property name="F53_HEIGHT" value="0.0079"/>
+
+  <!-- Calculates the inertial properties of a bounding box. 
+    From https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors-->
+  <xacro:macro name="box_inertia" params="length width height mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="${mass/12*(height**2+length**2)}" ixy="0" ixz = "0"
+               iyy="${mass/12*(width**2+length**2)}" iyz="0"
+               izz="${mass/12*(width**2+height**2)}"/>
+    </inertial>
+  </xacro:macro>
+
+<!-- arm_mount-->
+  <xacro:macro name="arm_mount" params="parent name color *origin">  
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>  
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.073" width="0.072" height="0.003" mass="0.01275"/>
+      <visual> 
+        <origin xyz="0 0 0" rpy="0.0 0.0 0"/>   
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/plate_arm.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/> 
+      </visual>
+     </link>
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!-- arm pole -->
+  <xacro:macro name="arm_pole" params="parent number x_loc y_loc z_loc">
+    <joint name="$arm_pole_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="arm_pole_${number}_link"/>
+    </joint>
+    <link name="arm_pole_${number}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/arm_pole.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="Gray"/> 
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.06" radius="0.005"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.0103"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="${0.0103/12*(3*0.005**2+0.06**2)}" ixy="0" ixz = "0"
+                 iyy="${0.0103/12*(3*0.005**2+0.06**2)}" iyz="0"
+                 izz="${0.0103/2*(0.005**2)}"/>
+      </inertial> 
+    </link>
+    <gazebo reference="$arm_pole_${number}_link">
+      <material>Gazebo/Gray</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--AX12舵机(固定安装方式) dynamixel_AX12_fixed-->
+  <xacro:macro name="dynamixel_AX12_fixed" params="parent name *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.055"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000017012" ixy="0.0" ixz="0.0"
+                 iyy="0.000013258" iyz="0.0"
+                 izz="0.000009483"/>
+      </inertial>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/ax12_box.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.01241" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.04762"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Black</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--AX12舵机(转动安装方式) dynamixel_AX12_revolute-->
+  <xacro:macro name="dynamixel_AX12_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.055"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000017012" ixy="0.0" ixz="0.0"
+                 iyy="0.000013258" iyz="0.0"
+                 izz="0.000009483"/>
+      </inertial>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/ax12_box.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.01241" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.04762"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F2(转动安装方式) bioloid_F2_revolute-->
+  <xacro:macro name="bioloid_F2_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.0485" height="0.0375" mass="0.010"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F2.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.00775" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.0485 0.0375"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F3(固定安装方式) bioloid_F3_fixed-->
+  <xacro:macro name="bioloid_F3_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.038" height="0.009" mass="0.005"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F3.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F3(转动安装方式) bioloid_F3_revolute-->
+  <xacro:macro name="bioloid_F3_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.038" height="0.009" mass="0.008"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F3.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F4(固定安装方式) bioloid_F4_fixed-->
+  <xacro:macro name="bioloid_F4_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0485" height="0.065" mass="0.016"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F4.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0215" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0485 0.065"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F4(转动安装方式) bioloid_F4_revolute-->
+  <xacro:macro name="bioloid_F4_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0485" height="0.065" mass="0.016"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F4.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0215" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0485 0.065"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F4G(固定安装方式) bioloid_F4G_fixed-->
+  <xacro:macro name="bioloid_F4G_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.0425" width="0.0485" height="0.083" mass="0.016"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F4G.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0215" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0425 0.0485 0.083"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F4G(转动安装方式) bioloid_F4G_revolute-->
+  <xacro:macro name="bioloid_F4G_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.0425" width="0.0485" height="0.083" mass="0.016"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F4G.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="-0.011 0.0 ${0.083/2-0.011}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0425 0.0485 0.083"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F5(固定安装方式) bioloid_F5_fixed-->
+  <xacro:macro name="bioloid_F5_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0785" height="0.04" mass="0.016"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F5.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.01" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0785 0.04"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F5(转动安装方式) bioloid_F5_revolute-->
+ <xacro:macro name="bioloid_F5_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0785" height="0.04" mass="0.016"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F5.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.01" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0785 0.04"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F5G(固定安装方式) bioloid_F5G_fixed-->
+  <xacro:macro name="bioloid_F5G_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0785" height="0.047" mass="0.016"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F5G.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.012" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0785 0.047"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F5G(转动安装方式) bioloid_F5G_revolute-->
+  <xacro:macro name="bioloid_F5G_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.028" width="0.0785" height="0.047" mass="0.016"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F5G.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.012" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.028 0.0785 0.047"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F10(固定安装方式) bioloid_F10_fixed-->
+  <xacro:macro name="bioloid_F10_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.038" height="0.004" mass="0.004"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F10.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.004"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F10(转动安装方式) bioloid_F10_revolute-->
+  <xacro:macro name="bioloid_F10_revolute" params="parent name color llimit ulimit vlimit *origin">
+    <joint name="${name}_joint" type="revolute">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="30" velocity="${vlimit}" lower="${llimit}" upper="${ulimit}"/>
+      <dynamics friction="0.13"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.025" width="0.038" height="0.004" mass="0.004"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F10.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.025 0.038 0.004"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--F53(固定安装方式) bioloid_F53_fixed-->
+  <xacro:macro name="bioloid_F53_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.0224" width="0.032" height="0.0079" mass="0.005"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/F53.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0224 0.032 0.0079"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--活动手掌 finger_active-->
+  <xacro:macro name="finger_active" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.108" width="0.034" height="0.025" mass="0.009"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/finger_active.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.054 0.017 0.0125" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.108 0.034 0.025"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+<!--固定手掌 finger_fixed-->
+  <xacro:macro name="finger_fixed" params="parent name color *origin">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_inertia length="0.0901" width="0.034" height="0.013" mass="0.0075"/>
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_arm_description/meshes/finger_static.stl" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0455 0.017 0.0065" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.091 0.034 0.013"/>
+        </geometry>
+      </collision>
+    </link>    
+    <gazebo reference="${name}_link">
+      <material>Gazebo/${color}</material>
+      <selfCollide>true</selfCollide>
+      <gravity>true</gravity>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: jupiterobot_description
+    relative_path: robots/jupiterobot_h_r_5_1.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/jupiterobot.srdf
+  CONFIG:
+    author_name: Jupiter Robot
+    author_email: support@jupiterobot.com
+    generated_timestamp: 1612855441

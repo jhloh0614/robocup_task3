@@ -1,0 +1,16 @@
+<launch>
+  <!--  *********** Bringup turtlebot ********** -->
+  <include file="$(find turtlebot_bringup)/launch/minimal.launch"/>
+ 
+  <!--  *********** Bringup turtlebot arm *********** -->
+  <include file="$(find turtlebot_arm_bringup)/launch/arm_with_group.launch" />
+
+  <!--  ************ Bringup the camera ************* -->
+  <include file="$(find rchomeedu_vision)/launch/multi_astra.launch"/>
+
+  <!--  ************ Arm joystick control ************* -->
+  <!--include file="$(find turtlebot_arm_logitech)/launch/turtlebot_arm_logitech.launch"  /-->
+
+  <!--  ************* Rviz ************* -->
+  <include file="$(find turtlebot_rviz_launchers)/launch/view_robot.launch"/> 
+</launch>

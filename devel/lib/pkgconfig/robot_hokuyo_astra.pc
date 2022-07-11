@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/devel
+
+Name: robot_hokuyo_astra
+Description: Description of robot_hokuyo_astra
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

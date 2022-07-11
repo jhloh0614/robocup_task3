@@ -1,0 +1,23 @@
+<!--
+  Driver for the logitech rumblepad2 joystick.
+
+  Use the D pad while pressing and holding the left trigger button (5) to control.
+-->
+<launch>
+  <!--  smooths inputs from cmd_vel_mux/input/teleop_raw to cmd_vel_mux/input/teleop -->
+  <include file="$(find jupiterobot_teleop_move_arm)/launch/includes/velocity_smoother.launch.xml"/>
+
+  <node pkg="jupiterobot_teleop_move_arm" type="jupiterobot_teleop_move_arm" name="jupiterobot_teleop_move_arm">
+    <remap from="jupiterobot_teleop_move_arm/cmd_vel" to="teleop_velocity_smoother/raw_cmd_vel"/>
+    <remap from="jupiterobot_teleop_move_arm/waist_command" to="waist_controller/command"/>
+    <remap from="jupiterobot_teleop_move_arm/shoulder_command" to="shoulder_controller/command"/>
+    <remap from="jupiterobot_teleop_move_arm/elbow_command" to="elbow_controller/command"/>
+    <remap from="jupiterobot_teleop_move_arm/wrist_command" to="wrist_controller/command"/>
+    <remap from="jupiterobot_teleop_move_arm/hand_command" to="hand_controller/command"/>
+    <remap from="jupiterobot_teleop_move_arm/capture_command" to="capture"/>
+  </node>
+
+  <node pkg="joy" type="joy_node" name="joystick">
+    <param name="dev" type="string" value="/dev/input/js1"/>
+  </node>
+</launch>

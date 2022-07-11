@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: jupiterobot_head_description
+Description: Description of jupiterobot_head_description
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

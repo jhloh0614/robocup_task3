@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+  <!-- Config and weights folder. -->
+  <rosparam file="$(find robot_vision_openvino)/config/ros.yaml" command="load" ns="openpose_ros" />
+  <rosparam file="$(find robot_vision_openvino)/config/openpose.yaml" command="load" ns="openpose_ros" />
+  <arg name="openpose_model/path" default="$(find robot_vision_openvino)/models/openpose" />
+
+  
+  
+  <!-- Start openvino_openpose node -->
+  <node pkg="robot_vision_openvino" type="openpose_ros" name="openpose_ros" output="screen" launch-prefix="$(arg launch_prefix)">
+    <param name="openpose_model/path"          value="$(arg openpose_model/path)" />
+  </node>
+
+ <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->
+</launch>

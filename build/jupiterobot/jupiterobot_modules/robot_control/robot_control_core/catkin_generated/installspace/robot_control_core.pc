@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: robot_control_core
+Description: Description of robot_control_core
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

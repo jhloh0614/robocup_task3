@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/msp_cmn.h
+msp_types.h
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/msp_types.h
+
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/msp_errors.h
+
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/msp_types.h
+
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/qisr.h
+msp_types.h
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/include/msp_types.h
+
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/src/iat_sample.c
+stdio.h
+-
+string.h
+-
+stdlib.h
+-
+unistd.h
+-
+qisr.h
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/src/qisr.h
+msp_cmn.h
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/src/msp_cmn.h
+msp_errors.h
+/home/mustar/catkin_ws/src/basic_function_packages/xfei_asr/src/msp_errors.h
+

@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/devel
+
+Name: robot_navigation_core
+Description: Description of robot_navigation_core
+Version: 0.0.0
+Cflags: -I/home/mustar/catkin_ws/src/jupiterobot/jupiterobot_modules/robot_navigation/robot_navigation_core/include
+Libs: -L${prefix}/lib -lnavigation
+Requires: actionlib actionlib_msgs geometry_msgs message_generation move_base_msgs roscpp rospy std_msgs

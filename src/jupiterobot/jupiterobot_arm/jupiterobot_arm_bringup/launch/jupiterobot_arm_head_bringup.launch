@@ -1,0 +1,46 @@
+<launch>
+   <!-- Launch all dynamixel motors -->
+   <node name="dynamixel_manager" pkg="dynamixel_controllers"
+      type="controller_manager.py" required="true" output="screen">
+      <rosparam>
+         namespace: dxl_manager
+         serial_ports:
+            pan_tilt_port:
+               port_name: "/dev/arm2"
+               baud_rate: 1000000
+               min_motor_id: 1
+               max_motor_id: 11
+               update_rate: 20
+      </rosparam>
+   </node>
+  
+
+   <!-- Load the joint controller configuration from a YAML file -->
+   <rosparam file="$(find jupiterobot_arm_bringup)/config/jupiterobot_arm_head.yaml" command="load"/>
+
+   <!-- Start the head pan and tilt controllers -->
+   <node name="dynamixel_controller_spawner_ax12" pkg="dynamixel_controllers"
+   type="controller_spawner.py"
+        args="--manager=dxl_manager --port=pan_tilt_port --type=simple arm_1_F3_joint arm_2_F4_joint arm_3_F4_joint arm_4_F3_joint arm_5_F3_joint arm_6_F3_joint gripper_joint head_pan_joint head_lift_joint"
+        output="screen"/>   
+
+   
+   <!-- Start the Dynamixel Joint States Publisher -->
+   <node name="dynamixel_joint_states_publisher" pkg="rbx1_dynamixels" type="dynamixel_joint_state_publisher.py" output="screen" />
+
+   <rosparam file="$(find jupiterobot_arm_bringup)/config/arm_group_joints_trajectory_controller.yaml" command="load"/>
+   <node name="controller_spawner_meta_arm" pkg="dynamixel_controllers" type="controller_spawner.py"
+         args="--manager=dxl_manager --type=meta arm_group_controller arm_1_F3_joint arm_2_F4_joint arm_3_F4_joint arm_4_F3_joint arm_5_F3_joint arm_6_F3_joint"
+         output="screen"/>
+
+   <rosparam file="$(find jupiterobot_arm_bringup)/config/gripper_group_joints_trajectory_controller.yaml" command="load"/>
+   <node name="controller_spawner_meta_gripper" pkg="dynamixel_controllers" type="controller_spawner.py"
+         args="--manager=dxl_manager --type=meta gripper_group_controller gripper_joint"
+         output="screen"/>
+
+   <rosparam file="$(find jupiterobot_arm_bringup)/config/head_group_joints_trajectory_controller.yaml" command="load"/>
+   <node name="controller_spawner_meta_head" pkg="dynamixel_controllers" type="controller_spawner.py"
+         args="--manager=dxl_manager --type=meta head_group_controller head_pan_joint head_lift_joint"
+         output="screen"/>
+
+</launch>

@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!-- Arm description for JupiterRobot Arm(jupiterobot arm) -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find jupiterobot_arm_description)/urdf/arm_hardware.xacro"/>
+
+  <material name="White">
+    <color rgba="0.87 0.90 0.87 1.0"/>
+  </material>
+  <material name="Black">
+    <color rgba="0.08 0.08 0.08 1.0"/>
+  </material>
+  <material name="Gray">
+    <color rgba="0.2 0.2 0.21 1.0"/>
+  </material>
+  <material name="Green">
+    <color rgba="0.22 0.32 0.14 1.0"/>
+  </material>
+
+  <xacro:macro name="jupiterobot_arm" params="parent color gripper_color *origin">
+    <link name="arm_base_link"/>
+    <joint name="arm_base_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="arm_base_link"/>
+    </joint>
+
+  <!-- arm mount-->
+  <arm_mount parent="arm_base_link" name="arm_mount" color="Black">
+    <origin xyz="0 0 ${AX12_HEIGHT/2-0.00325}" rpy="0 0 0"/>
+  </arm_mount>
+
+  <!--arm pole-->
+  <xacro:arm_pole parent="arm_mount_link" number="0" x_loc= "-0.01" y_loc= "0.028" z_loc="${-0.06/2}"/>
+  <xacro:arm_pole parent="arm_mount_link" number="1" x_loc= "-0.048" y_loc= "0.028" z_loc="${-0.06/2}"/>
+  <xacro:arm_pole parent="arm_mount_link" number="2" x_loc= "-0.048" y_loc= "-0.028" z_loc="${-0.06/2}"/>
+  <xacro:arm_pole parent="arm_mount_link" number="3" x_loc= "-0.01" y_loc= "-0.028" z_loc="${-0.06/2}"/>
+
+  <!-- arm joint 1-->
+  <dynamixel_AX12_fixed parent="arm_base_link" name="arm_1_servo">
+    <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+  </dynamixel_AX12_fixed>
+
+  <bioloid_F3_revolute parent="arm_1_servo_link" name="arm_1_F3" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_1_llimit}" ulimit="${joint_1_ulimit}">
+    <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-M_PI/2} ${M_PI/2} ${M_PI}"/>
+  </bioloid_F3_revolute>
+
+  <!-- arm joint 2-->
+  <dynamixel_AX12_fixed parent="arm_1_F3_link" name="arm_2_servo">
+    <origin xyz="0 0 ${-AX12_HEIGHT+0.001}" rpy="0 ${M_PI} ${M_PI}"/>
+  </dynamixel_AX12_fixed>
+  
+  <bioloid_F4_revolute parent="arm_2_servo_link" name="arm_2_F4" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_2_llimit}" ulimit="${joint_2_ulimit}">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </bioloid_F4_revolute>
+
+  <bioloid_F3_fixed parent="arm_2_F4_link" name="arm_2_F3" color="${color}">
+    <origin xyz="0 0 ${F4_HEIGHT}" rpy="0 ${M_PI} 0"/>
+  </bioloid_F3_fixed>
+
+  <!-- arm joint 3-->
+  <dynamixel_AX12_fixed parent="arm_2_F3_link" name="arm_3_servo">
+    <origin xyz="0 0 ${-AX12_HEIGHT+0.001}" rpy="0 ${M_PI} 0"/>
+  </dynamixel_AX12_fixed>
+  
+  <bioloid_F4_revolute parent="arm_3_servo_link" name="arm_3_F4" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_3_llimit}" ulimit="${joint_3_ulimit}">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </bioloid_F4_revolute>
+
+  <bioloid_F3_fixed parent="arm_3_F4_link" name="arm_3_F3" color="${color}">
+    <origin xyz="0 0 ${F4_HEIGHT}" rpy="0 ${M_PI} ${M_PI}"/>
+  </bioloid_F3_fixed>
+
+  <!-- arm joint 4-->
+  <dynamixel_AX12_fixed parent="arm_3_F3_link" name="arm_4_servo">
+    <origin xyz="0 0 ${-AX12_HEIGHT+0.001}" rpy="0 ${M_PI} 0"/>
+  </dynamixel_AX12_fixed>
+  
+  <bioloid_F3_revolute parent="arm_4_servo_link" name="arm_4_F3" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_4_llimit}" ulimit="${joint_4_ulimit}">
+    <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-M_PI/2} ${-M_PI/2} ${M_PI}"/>
+  </bioloid_F3_revolute>
+
+  <!-- arm joint 5-->
+  <dynamixel_AX12_fixed parent="arm_4_F3_link" name="arm_5_servo">
+    <origin xyz="0 0 ${-AX12_HEIGHT+0.001}" rpy="0 ${M_PI} ${M_PI}"/>
+  </dynamixel_AX12_fixed>
+
+  <bioloid_F3_revolute parent="arm_5_servo_link" name="arm_5_F3" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_5_llimit}" ulimit="${joint_5_ulimit}">
+    <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-M_PI/2} ${-M_PI/2} ${M_PI}"/>
+  </bioloid_F3_revolute>
+
+  <!-- arm joint 6-->
+  <dynamixel_AX12_fixed parent="arm_5_F3_link" name="arm_6_servo">
+    <origin xyz="0 0 ${-AX12_HEIGHT+0.001}" rpy="0 ${M_PI} ${M_PI}"/>
+  </dynamixel_AX12_fixed>
+
+  <bioloid_F3_revolute parent="arm_6_servo_link" name="arm_6_F3" color="${color}"
+                       vlimit="${joints_vlimit}" llimit="${joint_6_llimit}" ulimit="${joint_6_ulimit}">
+    <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-M_PI/2} ${M_PI} ${M_PI}"/>
+  </bioloid_F3_revolute>
+
+  <!-- gripper - Load JupiterRobot gripper -->
+  <xacro:include filename="$(find jupiterobot_arm_description)/urdf/jupiterobot_gripper.xacro"/>
+
+  <link name="end_effector_link"/>
+  <joint name="end_effector_link_joint" type="fixed">
+    <origin xyz="0.066 0 -0.007" rpy="-1.571 -0.0 -0.001"/>
+    <parent link="gripper_servo_link"/>
+    <child link="end_effector_link"/>
+  </joint>
+
+  </xacro:macro>
+</robot>

@@ -1,0 +1,23 @@
+controller_list:
+  - name: fake_arm_group_controller
+    joints:
+      - arm_1_F3_joint
+      - arm_2_F4_joint
+      - arm_3_F4_joint
+      - arm_4_F3_joint
+      - arm_5_F3_joint
+      - arm_6_F3_joint
+  - name: fake_gripper_group_controller
+    joints:
+      - gripper_joint
+  - name: fake_head_group_controller
+    joints:
+      - head_pan_joint
+      - head_lift_joint
+initial:  # Define initial robot poses.
+  - group: arm_group
+    pose: up
+  - group: gripper_group
+    pose: rest
+  - group: head_group
+    pose: rest

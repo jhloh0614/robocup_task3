@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: opencv_apps
+Description: Description of opencv_apps
+Version: 2.0.1
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lopencv_apps
+Requires: message_runtime sensor_msgs std_msgs

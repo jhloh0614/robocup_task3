@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: jupiterobot_arm_ikfast_arm_group_plugin
+Description: Description of jupiterobot_arm_ikfast_arm_group_plugin
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: moveit_core pluginlib roscpp tf_conversions

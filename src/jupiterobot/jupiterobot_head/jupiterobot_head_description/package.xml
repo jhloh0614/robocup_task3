@@ -1,0 +1,20 @@
+<package>
+  <name>jupiterobot_head_description</name>
+  <version>0.1.0</version>
+  <description>
+   jupiterobot_head_description contains URDF files and meshes for the JupiterRobot head.
+  </description>
+  <author>Yucheng Xu</author>
+  <author>Fei Liu</author>
+  <maintainer email="support@jupiterobot.com">David</maintainer>
+  <license>BSD</license>
+  
+  <url type="website">http://ros.org/wiki/turtlebot_head_description</url>
+  <url type="repository">https://github.com/turtlebot/turtlebot_arm</url>
+  <url type="bugtracker">https://github.com/turtlebot/turtlebot_arm/issues</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+</package>

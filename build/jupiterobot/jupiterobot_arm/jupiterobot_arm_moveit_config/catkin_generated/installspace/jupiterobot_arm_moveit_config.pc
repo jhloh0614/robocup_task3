@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: jupiterobot_arm_moveit_config
+Description: Description of jupiterobot_arm_moveit_config
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

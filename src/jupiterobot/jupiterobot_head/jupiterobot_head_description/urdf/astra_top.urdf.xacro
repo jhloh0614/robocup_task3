@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot name="sensor_astra_top" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find jupiterobot_description)/urdf/jupiterobot_gazebo.urdf.xacro"/>
+  <xacro:include filename="$(find jupiterobot_description)/urdf/jupiterobot_properties.urdf.xacro"/>
+
+  <!-- Xacro properties -->
+  <xacro:property name="astra_top_cam_py" value="-0.0125"/>
+  <xacro:property name="astra_top_depth_rel_rgb_py" value="0.0250" />
+  <xacro:property name="astra_top_cam_rel_rgb_py"   value="-0.0125" />
+  <xacro:property name="astra_top_dae_display_scale"   value="0.001" />
+  <!-- Parameterised in part by the values in turtlebot_properties.urdf.xacro -->
+  <xacro:macro name="sensor_astra_top" params="parent">
+    <joint name="camera_top_rgb_joint" type="fixed">
+      <origin xyz="-0.001 0.013 0.0378" rpy="0 0 0"/>
+      <!--origin xyz="-0.090141 0.00521832 0.85897"
+              rpy="-0.00701409 0.595353 -0.00283027"/-->
+      <!--<origin xyz="-0.174713 0.0263676 0.914854"
+              rpy="-0.00701409 0.595353 -0.00283027"/>-->
+      <!--<origin xyz="-0.118265 0.00250941 0.824414"
+              rpy="-0.00630774 0.526965 0.0470564"/>-->
+      <parent link="${parent}"/>
+      <child link="camera_top_rgb_frame" />
+    </joint>
+    <link name="camera_top_rgb_frame"/>
+
+    <joint name="camera_top_rgb_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_top_rgb_frame" />
+      <child link="camera_top_rgb_optical_frame" />
+    </joint>
+    <link name="camera_top_rgb_optical_frame"/>
+
+    <joint name="camera_top_joint" type="fixed">
+      <origin xyz="0 ${astra_top_cam_rel_rgb_py} 0"
+              rpy="0 0 0"/>
+      <parent link="camera_top_rgb_frame"/>
+      <child link="camera_top_link"/>
+    </joint>
+    <link name="camera_top_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://jupiterobot_head_description/meshes/astra.stl" scale="${astra_top_dae_display_scale} ${astra_top_dae_display_scale} ${astra_top_dae_display_scale}"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.5 0.5 0.5 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <geometry>
+        <box size="0.0400 0.1650 0.0300"/>
+      </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.564" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.003881243" ixy="0.0" ixz="0.0"
+                 iyy="0.000498940" iyz="0.0"
+                 izz="0.003879257" />
+      </inertial>
+    </link>
+    <gazebo reference="camera_top_link">             
+        <material>Gazebo/Gray</material>        
+    </gazebo> 
+
+    <joint name="camera_top_depth_joint" type="fixed">
+      <origin xyz="0 ${astra_top_depth_rel_rgb_py} 0" rpy="0 0 0" />
+      <parent link="camera_top_rgb_frame" />
+      <child link="camera_top_depth_frame" />
+    </joint>
+    <link name="camera_top_depth_frame"/>
+
+    <joint name="camera_top_depth_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_top_depth_frame" />
+      <child link="camera_top_depth_optical_frame" />
+    </joint>
+    <link name="camera_top_depth_optical_frame"/>
+
+    <!-- RGBD sensor for simulation, same as Kinect -->
+    <xacro:jupiterobot_astra_top/>
+
+  </xacro:macro>
+</robot>

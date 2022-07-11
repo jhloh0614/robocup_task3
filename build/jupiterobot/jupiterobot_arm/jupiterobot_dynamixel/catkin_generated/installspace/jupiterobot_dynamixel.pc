@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/install
+
+Name: jupiterobot_dynamixel
+Description: Description of jupiterobot_dynamixel
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

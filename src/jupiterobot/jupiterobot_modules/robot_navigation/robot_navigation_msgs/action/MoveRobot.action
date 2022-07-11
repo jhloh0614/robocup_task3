@@ -1,0 +1,13 @@
+# Goal definition
+float64 angle
+float64 distance
+
+---
+# Result definition
+geometry_msgs/Quaternion rotation
+geometry_msgs/Vector3 translation
+
+---
+# Feedback
+float64 current_distance
+float64 current_angle

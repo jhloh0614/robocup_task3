@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- Describe URDF for JupiterRobot Head -->
+<robot name="jupiterobot_head_1dof" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- We can configure joints velocity limit and lower/upper limits
+         to allow access to different operational areas, e.g. left handed vs. right handed robot -->
+    <xacro:property name="joints_vlimit" value="1.571"/>
+    <xacro:property name="joint_1_llimit" value="-2.617"/>
+    <xacro:property name="joint_1_ulimit" value="2.617"/>
+    <xacro:property name="joint_2_llimit" value="-2.617"/>
+    <xacro:property name="joint_2_ulimit" value="2.617"/>
+
+
+    <!-- Included URDF Files -->   
+    <xacro:include filename="$(find jupiterobot_head_description)/urdf/jupiterobot_head_1dof.xacro"/>
+
+    <!-- As we don't have here a turtlebot base, add a base_link link as its location reference -->
+    <!--<link name="base_link"/>-->
+
+    <!-- JupiterRobot head macro -->
+    <jupiterobot_head_1dof parent="plate_higher_link" color="Black" >               
+      <!-- Place the "floating" head at the location it should be if mounted on a JupiterRobot,
+           as pick and place and other demos assume this location -->
+      <origin xyz="-0.04935 0.0 0.198"/>
+    </jupiterobot_head_1dof>
+</robot>

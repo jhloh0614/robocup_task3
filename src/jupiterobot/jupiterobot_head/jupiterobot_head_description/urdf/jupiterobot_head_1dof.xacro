@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!-- Head description for JupiterRobot Head(jupiterobot head) -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find jupiterobot_head_description)/urdf/head_hardware.xacro"/>
+  <xacro:include filename="$(find jupiterobot_head_description)/urdf/astra_top.urdf.xacro"/>
+ 
+<!--
+  <material name="White">
+    <color rgba="0.87 0.90 0.87 1.0"/>
+  </material>
+  <material name="Black">
+    <color rgba="0.08 0.08 0.08 1.0"/>
+  </material>
+  <material name="Gray">
+    <color rgba="0.2 0.2 0.21 1.0"/>
+  </material>
+  <material name="Green">
+    <color rgba="0.22 0.32 0.14 1.0"/>
+  </material>
+-->
+
+  <xacro:macro name="jupiterobot_head_1dof" params="parent color *origin">
+    <joint name="head_base_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="head_base_link"/>
+    </joint>
+    <link name="head_base_link"/>
+
+    <head_bottom_fixed parent="head_base_link" name="head_bottom" color="${color}">
+      <origin xyz="0 0 ${0.032/2}" rpy="0 0 0"/>
+    </head_bottom_fixed>
+
+    <!--There are two types of 1DOF heads. 'head_top_revolute' and 'head_top_fixed'. Please choose one as your wish-->
+    <!--    
+    <head_top_revolute parent="head_bottom_link" name="head_top" color="${color}"
+                         vlimit="${joints_vlimit}" llimit="${joint_2_llimit}" ulimit="${joint_2_ulimit}">
+      <origin xyz="0 0 0.0262" rpy="0 0 0"/>
+    </head_top_revolute>
+    -->
+
+    <head_top_fixed parent="head_bottom_link" name="head_top" color="${color}">
+      <origin xyz="0 0 0.0262" rpy="0 0 0"/>
+    </head_top_fixed>
+
+    <!--astra_top_2dof>-->
+    <sensor_astra_top parent="head_top_link"/>
+  </xacro:macro>
+</robot>

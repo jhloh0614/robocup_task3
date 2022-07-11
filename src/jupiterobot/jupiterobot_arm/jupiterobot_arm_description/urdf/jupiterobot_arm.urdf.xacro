@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- Describe URDF for Turtlebot Arm 2.0 F5 to F5G-->
+<robot name="jupiterobot_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- We can configure joints velocity limit and lower/upper limits
+         to allow access to different operational areas, e.g. left handed vs. right handed robot -->
+    <xacro:property name="joints_vlimit" value="1.571"/>
+    <xacro:property name="joint_1_llimit" value="-2.617"/>
+    <xacro:property name="joint_1_ulimit" value="2.617"/>
+    <xacro:property name="joint_2_llimit" value="-2.617"/>
+    <xacro:property name="joint_2_ulimit" value="2.617"/>
+    <xacro:property name="joint_3_llimit" value="-2.617"/>
+    <xacro:property name="joint_3_ulimit" value="2.617"/>
+    <xacro:property name="joint_4_llimit" value="-2.617"/>
+    <xacro:property name="joint_4_ulimit" value="2.617"/>
+    <xacro:property name="joint_5_llimit" value="-2.617"/>
+    <xacro:property name="joint_5_ulimit" value="2.617"/>
+    <xacro:property name="joint_6_llimit" value="-2.617"/>
+    <xacro:property name="joint_6_ulimit" value="2.617"/>
+
+    <!-- Included URDF Files -->   
+    <xacro:include filename="$(find jupiterobot_arm_description)/urdf/jupiterobot_arm.xacro"/>
+
+    <!-- As we don't have here a turtlebot base, add a base_link link as its location reference -->
+    <!--link name="plate_top_link"/-->
+
+    <!-- JupiterRobot arm macro -->
+    <jupiterobot_arm parent="plate_top_link" color="White" gripper_color="Green">               
+      <!-- Place the "floating" arm at the location it should be if mounted on a turtlebot,
+           as pick and place and other demos assume this location -->
+      <origin xyz="0.1189 0.00888 ${0.044+0.003}"/>
+    </jupiterobot_arm>
+</robot>

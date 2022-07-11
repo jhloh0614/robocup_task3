@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!-- Head description for JupiterRobot Head(jupiterobot head) -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find jupiterobot_head_description)/urdf/head_hardware.xacro"/>
+  <xacro:include filename="$(find jupiterobot_head_description)/urdf/astra_head.urdf.xacro"/>
+ 
+<!--
+  <material name="White">
+    <color rgba="0.87 0.90 0.87 1.0"/>
+  </material>
+  <material name="Black">
+    <color rgba="0.08 0.08 0.08 1.0"/>
+  </material>
+  <material name="Gray">
+    <color rgba="0.2 0.2 0.21 1.0"/>
+  </material>
+  <material name="Green">
+    <color rgba="0.22 0.32 0.14 1.0"/>
+  </material>
+-->
+
+  <xacro:macro name="jupiterobot_head_2dof" params="parent color *origin">
+    <joint name="head_base_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="head_base_link"/>
+    </joint>
+    <link name="head_base_link"/>
+
+    <head_mount_fixed parent="head_base_link" name="head_mount" color="${color}">
+      <origin xyz="0 0 ${0.032/2}" rpy="0 0 0"/>
+    </head_mount_fixed>
+
+    <!-- head joint 1-->
+    <dynamixel_AX12_fixed parent="head_base_link" name="head_1_servo">
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}"/>
+    </dynamixel_AX12_fixed>
+    <bioloid_F3_revolute parent="head_1_servo_link" name="head_pan" color="White"
+                         vlimit="${joints_vlimit}" llimit="${joint_1_llimit}" ulimit="${joint_1_ulimit}">
+      <origin xyz="0 ${AX12_WIDTH/2} 0" rpy="${-M_PI/2} ${M_PI/2} ${M_PI}"/>
+    </bioloid_F3_revolute>
+
+    <!-- head joint 2-->
+    <dynamixel_AX12_fixed parent="head_pan_link" name="head_2_servo">
+      <origin xyz="0 0 ${-AX12_HEIGHT-0.004+0.001}" rpy="0 ${M_PI} ${M_PI}"/>
+    </dynamixel_AX12_fixed>
+    <head_lift_revolute parent="head_2_servo_link" name="head_lift" color="${color}"
+                         vlimit="${joints_vlimit}" llimit="${joint_2_llimit}" ulimit="${joint_2_ulimit}">
+      <origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+    </head_lift_revolute>
+
+    <!--astra_top_2dof>-->
+    <sensor_astra_top parent="head_lift_link"/>
+  </xacro:macro>
+</robot>

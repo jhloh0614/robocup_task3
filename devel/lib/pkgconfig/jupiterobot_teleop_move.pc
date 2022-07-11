@@ -1,0 +1,8 @@
+prefix=/home/mustar/catkin_ws/devel
+
+Name: jupiterobot_teleop_move
+Description: Description of jupiterobot_teleop_move
+Version: 2.4.2
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp geometry_msgs joy

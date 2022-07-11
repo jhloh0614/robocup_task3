@@ -1,0 +1,105 @@
+joints: ['arm_1_F10_joint', 'arm_2_servo_joint', 'arm_3_F5_joint', 'arm_4_F2_joint', 'arm_5_F4_joint', 'arm_6_F2_joint', 'arm_7_F3_joint', 'gripper_joint']
+
+arm_1_F10_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_1_F10_joint
+    joint_speed: 0.8
+    motor:
+        id: 1
+        init: 512
+        min: 0
+        max: 1023
+
+arm_2_servo_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_2_servo_joint
+    joint_speed: 0.8
+    motor:
+        id: 2
+        init: 512
+        min: 0
+        max: 1023
+
+arm_3_F5_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_3_F5_joint
+    joint_speed: 0.8
+    motor:
+        id: 3
+        init: 512
+        min: 0
+        max: 1023
+
+arm_4_F2_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_4_F2_joint
+    joint_speed: 0.8
+    motor:
+        id: 4
+        init: 512
+        min: 0
+        max: 1023
+
+arm_5_F4_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_5_F4_joint
+    joint_speed: 0.8
+    motor:
+        id: 5
+        init: 512
+        min: 0
+        max: 1023
+
+arm_6_F2_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_6_F2_joint
+    joint_speed: 0.8
+    motor:
+        id: 6
+        init: 512
+        min: 0
+        max: 1023
+
+arm_7_F3_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: arm_7_F3_joint
+    joint_speed: 0.8
+    motor:
+        id: 7
+        init: 512
+        min: 0
+        max: 1023
+
+gripper_joint:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: gripper_joint
+    joint_speed: 0.8
+    motor:
+        id: 8
+        init: 512
+        min: 0
+        max: 1023
